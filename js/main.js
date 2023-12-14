@@ -26,7 +26,7 @@ async function initializeFaceDetector() {
         vision,
         {
             baseOptions: {
-            modelAssetPath: "/app/shared/models/blaze_face_short_range.tflite"
+            modelAssetPath: "./app/shared/models/blaze_face_short_range.tflite"
             },
             scoreThreshold: 0.3,
             runningMode: runningMode
@@ -214,7 +214,6 @@ function openSaved(selectField){
     })
 }
 
-
 function savedImagePopUp(instance, imageContainer){
 
     let savedImageDialogBox = createImagePopUp();
@@ -322,7 +321,6 @@ function displayImageDetections(result, resultElement){
 
         detectionBox.appendChild(detectionInfo);
         resultElement.parentNode.appendChild(detectionBox);
-        console.log(detection.keypoints);
 
         detection.keypoints.forEach(point =>{
             console.log(point)
@@ -384,4 +382,3 @@ function applyLightMode() {
     document.getElementById('dlSlider').classList.remove('dl-slider-dark-mode');
     document.getElementById('sunMoonIcon').setAttribute('class', 'fa fa-moon-o');
 };
-
