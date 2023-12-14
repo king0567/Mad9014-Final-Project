@@ -215,43 +215,62 @@ function openSaved(selectField){
 }
 
 function savedImagePopUp(instance, imageContainer){
+    
+    fetch(instance.url)
+    .then(response =>{
+        if(!response.ok){
+            throw new Error(response.status)
+        }
+        return response.blob();
+    })
+    .then(imageBlob =>{
+        let newURL = URL.createObjectURL(imageBlob);
+        createSavedImagePopUp(newURL, imageContainer)
+    })
+    .catch(err=>{
+        alert(err)
+    })
 
-    let savedImageDialogBox = createImagePopUp();
-    document.body.appendChild(savedImageDialogBox);
-    console.log(instance)
-    let savedBigImage = document.createElement('img');
-    savedBigImage.setAttribute('src', instance.url);
-    savedBigImage.setAttribute('crossorigin', 'anonymous');
-    savedBigImage.setAttribute('class', 'big-image');
-    savedBigImage.addEventListener('load', ()=>{
-        savedImageDialogBox.showModal();
-    });
-    savedBigImage.addEventListener('load', (event)=>{
-        doFaceScan(event, savedImageDialogBox)
-    });
+    function createSavedImagePopUp(newURL, imageContainer){
+        let savedImageDialogBox = createImagePopUp();
+        document.body.appendChild(savedImageDialogBox);
+        console.log(instance)
+        let savedBigImage = document.createElement('img');
+        savedBigImage.setAttribute('src', newURL);
+        savedBigImage.setAttribute('class', 'big-image');
+        console.log(savedBigImage)
+        savedBigImage.addEventListener('load', ()=>{
+            savedImageDialogBox.showModal();
+        });
+        savedBigImage.addEventListener('load', (event)=>{
+            doFaceScan(event, savedImageDialogBox)
+        });
+    
+        let closeButton = document.createElement('button');
+        closeButton.setAttribute('class', 'btn');
+        closeButton.textContent = 'Close'
+        closeButton.addEventListener('click', ()=>{
+            savedImageDialogBox.close();
+            savedImageDialogBox.parentNode.removeChild(savedImageDialogBox);
+        });
+    
+        let deleteButton = document.createElement('button');
+        deleteButton.setAttribute('class', 'btn');
+        deleteButton.textContent = 'Delete'
+        deleteButton.addEventListener('click', ()=>{
+            doDelete(instance, savedImageDialogBox, imageContainer);
+        });
+    
+        let buttonDiv = document.createElement('div');
+        buttonDiv.setAttribute('class', 'btn-div');
+        buttonDiv.appendChild(closeButton);
+        buttonDiv.appendChild(deleteButton);
+    
+        savedImageDialogBox.appendChild(savedBigImage);
+        savedImageDialogBox.appendChild(buttonDiv);
+    }
 
-    let closeButton = document.createElement('button');
-    closeButton.setAttribute('class', 'btn');
-    closeButton.textContent = 'Close'
-    closeButton.addEventListener('click', ()=>{
-        savedImageDialogBox.close();
-        savedImageDialogBox.parentNode.removeChild(savedImageDialogBox);
-    });
 
-    let deleteButton = document.createElement('button');
-    deleteButton.setAttribute('class', 'btn');
-    deleteButton.textContent = 'Delete'
-    deleteButton.addEventListener('click', ()=>{
-        doDelete(instance, savedImageDialogBox, imageContainer);
-    });
-
-    let buttonDiv = document.createElement('div');
-    buttonDiv.setAttribute('class', 'btn-div');
-    buttonDiv.appendChild(closeButton);
-    buttonDiv.appendChild(deleteButton);
-
-    savedImageDialogBox.appendChild(savedBigImage);
-    savedImageDialogBox.appendChild(buttonDiv);
 }
 
 function doDelete(instance, dialogBox, imageContainer){
